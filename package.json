@@ -1,0 +1,40 @@
+{
+  "name": "decixa-sdk",
+  "version": "0.1.0",
+  "description": "TypeScript SDK for Decixa — The decision layer for AI Agents",
+  "keywords": [
+    "decixa",
+    "api-discovery",
+    "x402",
+    "ai-agents",
+    "sdk"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/koki-socialgist/decixa-sdk.git"
+  }
+}
