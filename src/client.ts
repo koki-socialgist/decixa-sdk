@@ -18,6 +18,11 @@ export class HttpClient {
       "User-Agent": `decixa-sdk/${VERSION}`,
     };
     if (this.apiKey) h["Authorization"] = `Bearer ${this.apiKey}`;
+    // DECIXA_INTERNAL=true が設定されていたら internal ヘッダを付与
+    // ローカル開発・テスト時に .env.local で設定する想定
+    if (typeof process !== "undefined" && process.env?.DECIXA_INTERNAL === "true") {
+      h["x-decixa-source"] = "internal";
+    }
     return h;
   }
 
