@@ -89,6 +89,7 @@ Get full metadata for a specific API.
 ```typescript
 const api = await decixa.detail("550e8400-e29b-41d4-a716-446655440000");
 
+api.verified_live                 // true if the API accepts x402 payments
 api.trust_evidence.uptime_7d     // 7-day uptime %
 api.trust_evidence.p95_latency_ms // p95 latency
 api.agent_compatibility           // latency, execution mode, deterministic

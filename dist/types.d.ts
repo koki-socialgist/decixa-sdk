@@ -108,6 +108,12 @@ export interface ApiDetail {
     name: string;
     description: string;
     endpoint: string;
+    /**
+     * Whether this API is verified to accept x402 payments
+     * (i.e., payment_req_parsed === true).
+     * Convenience flag derived from trust_evidence.payment_req_parsed.
+     */
+    verified_live: boolean;
     pricing: Pricing;
     capability: string | null;
     tags: string[];
