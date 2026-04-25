@@ -5,45 +5,52 @@ export class Decixa {
         this.http = new HttpClient(config);
     }
     /**
-     * Get the top API recommendation for a given capability and intent.
+     * Get the top API recommendation for an intent.
+     *
+     * Use the `recommendation_status` discriminator to narrow the result type.
      *
      * @example
      * ```ts
-     * const result = await decixa.resolve({
-     *   capability: "Extract",
-     *   intent: "extract social media posts by keyword",
-     * });
-     * console.log(result.recommended?.name);
+     * const result = await decixa.resolve({ intent: "scrape reddit" });
+     * if (result.recommendation_status === "resolved") {
+     *   console.log(result.recommended.name);  // typed as ResolvedApi
+     * } else {
+     *   console.log(result.no_match_reason);   // typed as NoMatchReason
+     *   console.log(result.suggestions.length);
+     * }
      * ```
      */
     async resolve(params) {
         return this.http.post("/api/agent/resolve", params);
     }
     /**
-     * Search and browse APIs with filters and pagination.
+     * List APIs ranked by intent. Returns multiple candidates so the agent can choose.
+     * Use this when you want options — use `resolve()` for a single recommendation.
      *
      * @example
      * ```ts
      * const result = await decixa.discover({
-     *   task: "web scraping",
-     *   sort: "trust",
+     *   intent: "web scraping",
+     *   sort: "relevance",  // default
      *   limit: 10,
      * });
      * for (const api of result.apis) {
-     *   console.log(api.name, api.trust_score);
+     *   console.log(api.name, api.similarity, api.trust.score);
+     * }
+     * if (result.no_match_reason) {
+     *   console.log("No matches above threshold:", result.top_candidates_below_threshold);
      * }
      * ```
      */
     async discover(params = {}) {
         const query = {};
-        if (params.task)
-            query.task = params.task;
-        if (params.capability)
-            query.capability = params.capability;
+        // intent / task: intent 優先、なければ task fallback (deprecated alias)
+        const taskValue = params.intent ?? params.task;
+        if (taskValue)
+            query.task = taskValue;
         if (params.tag)
             query.tag = params.tag;
-        if (params.agent_ready !== undefined)
-            query.agent_ready = String(params.agent_ready);
+        // capability / agent_ready は @deprecated。query に含めない (server で silently ignore)
         if (params.latency_tier)
             query.latency_tier = params.latency_tier;
         if (params.execution_mode)
@@ -52,6 +59,8 @@ export class Decixa {
             query.pricing_model = params.pricing_model;
         if (params.budget !== undefined)
             query.budget = params.budget;
+        if (params.min_similarity !== undefined)
+            query.min_similarity = params.min_similarity;
         if (params.sort)
             query.sort = params.sort;
         if (params.limit !== undefined)

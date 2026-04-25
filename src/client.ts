@@ -1,7 +1,7 @@
 import type { DecixaConfig } from "./types.js";
 
 const DEFAULT_BASE_URL = "https://api.decixa.ai";
-const VERSION = "0.1.0";
+const VERSION = "0.1.3";
 
 export class HttpClient {
   private baseUrl: string;
