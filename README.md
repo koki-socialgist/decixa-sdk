@@ -57,7 +57,9 @@ const result = await decixa.resolve({
   intent: "find news articles about AI",   // required
   constraints: {
     latency: "low",                        // low | medium | high
-    budget: 0.05,                          // max USDC per call
+    cost_max_per_call_usdc: 0.05,          // v0.1.4 (D-084): max USDC per call
+    latency_p95_max_ms: 500,               // v0.1.4 (D-084): max measured p95 latency in ms
+    // budget: 0.05,                       // @deprecated v0.1.4: prefer cost_max_per_call_usdc
   },
   min_similarity: 0.5,                     // 0.2–0.9, default 0.5
 });

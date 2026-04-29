@@ -59,6 +59,11 @@ export class Decixa {
             query.pricing_model = params.pricing_model;
         if (params.budget !== undefined)
             query.budget = params.budget;
+        // v0.1.4 (D-084): new filters
+        if (params.cost_max_per_call_usdc !== undefined)
+            query.cost_max_per_call_usdc = params.cost_max_per_call_usdc;
+        if (params.latency_p95_max_ms !== undefined)
+            query.latency_p95_max_ms = params.latency_p95_max_ms;
         if (params.min_similarity !== undefined)
             query.min_similarity = params.min_similarity;
         if (params.sort)

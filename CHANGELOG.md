@@ -1,5 +1,38 @@
 # Changelog
 
+## v0.1.4 (2026-04-29)
+
+D-084 — new constraint filters from Decixa Agent Hub API.
+
+### Added
+- **`ResolveParams.constraints.cost_max_per_call_usdc`** (number, ≥ 0): Maximum cost per call in USDC. Invalid values (negative, NaN) return HTTP 400. Use this for new code.
+- **`ResolveParams.constraints.latency_p95_max_ms`** (number, > 0): Maximum measured p95 latency in milliseconds. Invalid values (≤0, NaN) return HTTP 400. APIs with no measured `p95_latency_ms` are excluded from results when this filter is set.
+- **`DiscoverParams.cost_max_per_call_usdc`** (top-level query param) — same semantics as on `ResolveParams.constraints`.
+- **`DiscoverParams.latency_p95_max_ms`** (top-level query param) — same semantics.
+
+### Changed
+- `ResolveParams.constraints.budget` is now marked `@deprecated`. Prefer `cost_max_per_call_usdc`. `budget` is still accepted for backward compatibility (silently ignores invalid values). When both are specified, the **stricter (smaller) value applies** (e.g., `budget: 0.05` + `cost_max_per_call_usdc: 0.01` → `0.01` applies).
+- `DiscoverParams.budget` — same deprecation note.
+
+### Note
+- `no_match_reason` enum on `DiscoverResponse` was extended on the server side to include `insufficient_verified_pool_for_intent` (resolve already had it). Type definition update is in this version. Useful for distinguishing "filter exhaustion" (relax constraints) vs "low semantic similarity" (rephrase intent).
+
+### Migration
+No breaking changes. Existing v0.1.3 callers continue to work.
+
+```ts
+// v0.1.4 example: bandit-friendly constrained resolve
+const result = await decixa.resolve({
+  intent: "real-time crypto price for BTC",
+  constraints: {
+    latency_p95_max_ms: 500,
+    cost_max_per_call_usdc: 0.01,
+  },
+});
+```
+
+---
+
 ## v0.1.3 (2026-04-25)
 
 Phase 3b step 3 — types aligned with Decixa Agent Hub API v1.1.0.

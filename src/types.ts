@@ -83,7 +83,24 @@ export interface ResolveParams {
   intent: string;
   constraints?: {
     latency?: LatencyTier;
+    /**
+     * @deprecated v0.1.4: Prefer `cost_max_per_call_usdc`. Kept for backward compatibility.
+     * Invalid values are silently ignored. When both `budget` and `cost_max_per_call_usdc`
+     * are set, the stricter (smaller) value applies (e.g., budget=0.05 + cost_max_per_call_usdc=0.01 → 0.01 applies).
+     */
     budget?: number;
+    /**
+     * v0.1.4 (D-084): Maximum cost per call in USDC.
+     * Invalid values (negative, NaN) return HTTP 400.
+     * When both `budget` and this are set, the stricter (smaller) value applies.
+     */
+    cost_max_per_call_usdc?: number;
+    /**
+     * v0.1.4 (D-084): Maximum measured p95 latency in milliseconds.
+     * Invalid values (≤0, NaN) return HTTP 400.
+     * APIs with no measured `p95_latency_ms` are excluded from results when this filter is set.
+     */
+    latency_p95_max_ms?: number;
     /**
      * @deprecated v0.1.3: Server silently ignores this (D-059 v4 c3.5). Will be removed in v1.0.0.
      * agent_ready data quality issue (97.3% of verified pool defaults to false). See D-068.
@@ -198,7 +215,24 @@ export interface DiscoverParams {
   latency_tier?: LatencyTier;
   execution_mode?: "sync" | "async";
   pricing_model?: PricingModel;
+  /**
+   * @deprecated v0.1.4: Prefer `cost_max_per_call_usdc`. Kept for backward compatibility.
+   * Invalid values are silently ignored. When both `budget` and `cost_max_per_call_usdc`
+   * are set, the stricter (smaller) value applies.
+   */
   budget?: number;
+  /**
+   * v0.1.4 (D-084): Maximum cost per call in USDC.
+   * Invalid values (negative, NaN) return HTTP 400.
+   * When both `budget` and this are set, the stricter (smaller) value applies.
+   */
+  cost_max_per_call_usdc?: number;
+  /**
+   * v0.1.4 (D-084): Maximum measured p95 latency in milliseconds.
+   * Invalid values (≤0, NaN) return HTTP 400.
+   * APIs with no measured `p95_latency_ms` are excluded from results when this filter is set.
+   */
+  latency_p95_max_ms?: number;
   /**
    * Similarity threshold for vector search. Range 0.2–0.9. Default 0.3.
    * Out-of-range values throw 400 from the server.
